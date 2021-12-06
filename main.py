@@ -3,6 +3,7 @@ import telebot
 import config
 import heroes
 import requests
+import os
 from bs4 import BeautifulSoup
 
 
@@ -12,6 +13,8 @@ admin = 406626012
 
 @bot.message_handler(commands=['start', 'help'])
 def main(message):
+    # for i in heroes.miders:
+    #     send_hero(message, i)
     hero = random.choice(heroes.miders)
     send_hero(message, hero)
 
@@ -41,7 +44,9 @@ def parse_stats(message, hero):
 
 def send_hero(message, hero):
     """Send hero visual"""
+    # media_url = os.getcwd() + hero['media']
     media_url = hero['media']
+    print(media_url)
     if media_url != '':
         if (media_url[-4:] == '.mp4' or 
             media_url[-4:] == '.gif' or 
@@ -49,10 +54,19 @@ def send_hero(message, hero):
             try:
                 bot.send_video(message.chat.id, media_url)
             except:
+                try: 
+                    media_video = open(media_url, 'rb')
+                    bot.send_video(message.chat.id, media_video)
+                except:
+                    fail = open('Bztt_L4jfX8.jpg', 'rb')
+                    bot.send_photo(message.chat.id, fail)
+        else:
+            try:
+                media_image = open(media_url, 'rb')
+                bot.send_photo(message.chat.id, media_image)
+            except:
                 fail = open('Bztt_L4jfX8.jpg', 'rb')
                 bot.send_photo(message.chat.id, fail)
-        else:
-            bot.send_photo(message.chat.id, media_url)
     else:
         bot.send_message(message.chat.id, text='Ыконку спиздили хохлы')
     parse_stats(message, hero['hero'])
